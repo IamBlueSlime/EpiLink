@@ -396,3 +396,7 @@ Temporary Items
 # Local
 .env
 dist
+.secret
+data.json
+.envrc
+_db/

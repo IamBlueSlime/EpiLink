@@ -1,0 +1,58 @@
+version: '3.7'
+
+services:
+  epilink:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - HOST
+      - PORT
+      - PUBLIC_HOST
+      - SESSION_SECRET
+      - NODE_ENV
+      - DATABASE_HOST=database
+      - DATABASE_PORT=5432
+      - DATABASE_USERNAME
+      - DATABASE_PASSWORD
+      - DATABASE_NAME
+      - JWT_PRIVATE_KEY_PATH
+      - JWT_PUBLIC_KEY_PATH
+      - JWT_ALGORITHM
+      - DISCORD_TOKEN
+      - AZURE_AD_TENANT
+      - AZURE_AD_CLIENT_ID
+      - AZURE_AD_CLIENT_SECRET
+    ports:
+      - ${PORT:-8080}:${PORT:-3000}
+    volumes:
+      - ./data.json:/app/data.json
+      - ./.secret:/app/.secret
+    depends_on:
+      - database
+    networks:
+      - epilink-private
+    restart: on-failure
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://127.0.0.1:${PORT}']
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  database:
+    image: bitnami/postgresql:12
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    ports:
+      - ${DATABASE_PORT:-5432}:5432
+    volumes:
+      - ./_db:/var/lib/postgresql/data
+    networks:
+      - epilink-private
+    restart: on-failure
+
+networks:
+  epilink-private:

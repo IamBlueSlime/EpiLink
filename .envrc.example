@@ -1,0 +1,28 @@
+## Bindings
+export HOST="0.0.0.0"
+export PORT="8080"
+export PUBLIC_HOST=""
+export SESSION_SECRET=""
+
+## Environment
+export NODE_ENV="development"
+
+## Database
+export DATABASE_HOST="127.0.0.1"
+export DATABASE_PORT="5432"
+export DATABASE_USERNAME="postgres"
+export DATABASE_PASSWORD="postgres"
+export DATABASE_NAME="epilink"
+
+## JWT
+export JWT_PRIVATE_KEY_PATH=".secret/jwt.key"
+export JWT_PUBLIC_KEY_PATH=".secret/jwt.key.pub"
+export JWT_ALGORITHM="RS256"
+
+## Discord
+export DISCORD_TOKEN=""
+
+## Azure
+export AZURE_AD_TENANT=""
+export AZURE_AD_CLIENT_ID=""
+export AZURE_AD_CLIENT_SECRET=""
