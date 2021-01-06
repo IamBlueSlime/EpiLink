@@ -70,10 +70,7 @@ export class DiscordService {
     if (message.author.id === this.client.user.id) return;
     const args = message.content.split(' ');
 
-    if (!args[0].startsWith('!')) {
-      await message.react('🤔');
-      return;
-    }
+    if (!args[0].startsWith('!')) return;
 
     const commandName = args[0].substr(1);
     args.shift();
@@ -89,8 +86,6 @@ export class DiscordService {
       if (await command.handle(this.client, message, args))
         await message.react('👌');
       else await message.react('🤔');
-    } else {
-      await message.react('🤔');
     }
   }
 
