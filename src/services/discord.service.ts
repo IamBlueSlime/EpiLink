@@ -105,6 +105,11 @@ export class DiscordService {
       })
       .then(async (userEntity) => {
         if (!userEntity) throw new Error('User not found');
+
+        if (userEntity.discordId) {
+          await this.removeCertifiedRoleEverywhere(userEntity.discordId);
+        }
+
         userEntity.discordId = discordId;
         await this.userRepository.save(userEntity);
       });
@@ -131,6 +136,21 @@ export class DiscordService {
   ): Promise<void> {
     const serverConfig = this.getServerConfigForGuild(guild);
     await guildMember.roles.add(serverConfig.certifiedRoleId);
+  }
+
+  async removeCertifiedRoleEverywhere(discordId: string): Promise<void> {
+    await Promise.all(
+      this.dataConfiguration.servers.map(async (serverConfig) => {
+        const guild = this.client.guilds.cache.get(serverConfig.id);
+        const guildMember = await guild.members.fetch(
+          await this.client.users.fetch(discordId),
+        );
+
+        if (guildMember) {
+          await guildMember.roles.remove(serverConfig.certifiedRoleId);
+        }
+      }),
+    );
   }
 
   isUserAdministrator(guild: Guild, guildMember: GuildMember): boolean {

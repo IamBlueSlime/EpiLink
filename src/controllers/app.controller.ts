@@ -22,7 +22,7 @@ export class AppController {
   link() {}
 
   @Get('link/callback')
-  @HttpCode(HttpStatus.MOVED_PERMANENTLY)
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AzureAdAuthGuard)
   async linkCallback(@Req() request: Request): Promise<string> {
     const user = request.user as UserEntity;
