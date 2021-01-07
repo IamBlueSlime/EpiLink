@@ -10,9 +10,9 @@ export class DataServerConfiguration {
   @IsNotEmpty()
   certifiedRoleId: string;
 
-  @IsString()
-  @IsNotEmpty()
-  adminRoleId: string;
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
+  adminRoleIds: string[];
 }
 
 export class DataConfiguration {

@@ -150,9 +150,11 @@ export class DiscordService {
 
   isUserAdministrator(guild: Guild, guildMember: GuildMember): boolean {
     const serverConfig = this.getServerConfigForGuild(guild);
-    return (
-      guildMember.id in this.dataConfiguration.admins ||
-      guildMember.roles.cache.has(serverConfig.adminRoleId)
+
+    if (guildMember.id in this.dataConfiguration.admins) return true;
+
+    return serverConfig.adminRoleIds.some((roleId) =>
+      guildMember.roles.cache.has(roleId),
     );
   }
 
