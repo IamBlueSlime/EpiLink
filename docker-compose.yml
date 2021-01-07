@@ -49,7 +49,7 @@ services:
     ports:
       - ${DATABASE_PORT:-5432}:5432
     volumes:
-      - ./_db:/var/lib/postgresql/data
+      - ./_db:/bitnami/postgresql
     networks:
       - epilink-private
     restart: on-failure
