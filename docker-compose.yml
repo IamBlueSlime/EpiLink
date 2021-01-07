@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3'
 
 services:
   epilink:
@@ -38,7 +38,6 @@ services:
       interval: 1m30s
       timeout: 10s
       retries: 3
-      start_period: 40s
 
   database:
     image: bitnami/postgresql:12
