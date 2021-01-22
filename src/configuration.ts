@@ -31,7 +31,7 @@ export class Configuration {
   host: string;
 
   @Min(0)
-  @Transform(parseInt)
+  @Transform(({ value }) => parseInt(value))
   port: number;
 
   @IsString()
@@ -47,7 +47,7 @@ export class Configuration {
   databaseHost: string;
 
   @Min(0)
-  @Transform(parseInt)
+  @Transform(({ value }) => parseInt(value))
   databasePort: number;
 
   @IsString()
