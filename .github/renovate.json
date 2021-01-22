@@ -1,0 +1,12 @@
+{
+  "extends": ["config:base"],
+  "enabledManagers": ["github-actions", "npm"],
+  "labels": ["dependencies"],
+  "stabilityDays": 3,
+  "packageRules": [
+    {
+      "depTypeList": ["devDependencies"],
+      "automerge": true
+    }
+  ]
+}
