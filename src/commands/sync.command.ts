@@ -23,13 +23,13 @@ export class SyncCommand extends Command {
     message: Message,
     args: string[],
   ): Promise<boolean> {
-    if (args.length !== 1) {
+    if (args.length !== 0) {
       await message.reply(`Usage : !sync`);
       return false;
     }
 
     const guild = message.guild;
-    const guildMembers = guild.members.cache;
+    const guildMembers = await guild.members.fetch();
     const databaseDiscordIds = await this.userRepository
       .find({
         discordId: In(guildMembers.map((guildMember) => guildMember.id)),
@@ -43,40 +43,44 @@ export class SyncCommand extends Command {
         this.discordService.getServerConfigForGuild(guild).certifiedRoleId,
       ),
     );
-    const badMembers = alreadyWithRole.filter(
+    const shouldNotHaveMembers = alreadyWithRole.filter(
       (guildMember) => !databaseDiscordIds.includes(guildMember.id),
     );
-    const validMembers = guildMembers.filter((guildMember) =>
-      databaseDiscordIds.includes(guildMember.id),
-    );
+    const shouldHaveMembers = guildMembers
+      .filter((guildMember) => !alreadyWithRole.has(guildMember.id))
+      .filter((guildMember) => databaseDiscordIds.includes(guildMember.id));
 
     const lines = [
       `${guildMembers.size} utilisateurs sur le serveur.`,
-      `${databaseDiscordIds.length} utilisateurs connectés en base de donnée.`,
+      `${databaseDiscordIds.length} utilisateurs connectés en base de données.`,
       `${alreadyWithRole.size} utilisateurs avec le rôle Certifié.`,
-      `${badMembers.size} utilisateurs de devraient pas avoir le rôle Certifié.`,
-      `${validMembers.size} utilisateurs devraient avoir le rôle Certifié.`,
+      `${shouldNotHaveMembers.size} utilisateurs de devraient pas avoir le rôle Certifié.`,
+      `${shouldHaveMembers.size} utilisateurs devraient avoir le rôle Certifié.`,
     ];
 
     await message.reply(lines.join('\n'));
 
-    if (badMembers.size > 0) {
+    if (shouldNotHaveMembers.size > 0) {
       await message.reply(
         `Retrait du rôle Certifié aux utilisateurs non connectés...`,
       );
       await Promise.all(
-        badMembers.map((guildMember) =>
+        shouldNotHaveMembers.map((guildMember) =>
           this.discordService.removeCertifiedRoleTo(guild, guildMember),
         ),
       );
     }
 
-    await message.reply('Ajout du rôle Certifié aux utilisateurs connectés...');
-    await Promise.all(
-      validMembers.map((guildMember) =>
-        this.discordService.addCertifiedRoleTo(guild, guildMember),
-      ),
-    );
+    if (shouldHaveMembers.size > 0) {
+      await message.reply(
+        'Ajout du rôle Certifié aux utilisateurs connectés...',
+      );
+      await Promise.all(
+        shouldHaveMembers.map((guildMember) =>
+          this.discordService.addCertifiedRoleTo(guild, guildMember),
+        ),
+      );
+    }
 
     return true;
   }
