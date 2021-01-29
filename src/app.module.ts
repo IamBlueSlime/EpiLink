@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Client } from 'discord.js';
+import { Client, Intents } from 'discord.js';
 
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from './config.module';
@@ -41,7 +41,9 @@ import { TokenService } from './services/token.service';
     {
       provide: Client,
       useFactory: async (configuration: Configuration) => {
-        const client = new Client();
+        const intents = new Intents([Intents.NON_PRIVILEGED, 'GUILD_MEMBERS']);
+        const client = new Client({ ws: { intents } });
+
         await client.login(configuration.discordToken);
         return client;
       },

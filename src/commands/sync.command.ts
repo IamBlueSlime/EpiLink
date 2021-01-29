@@ -28,6 +28,8 @@ export class SyncCommand extends Command {
       return false;
     }
 
+    await message.react('⌛');
+
     const guild = message.guild;
     const guildMembers = await guild.members.fetch();
     const databaseDiscordIds = await this.userRepository
