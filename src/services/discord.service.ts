@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import { AuthCommand } from '../commands/auth.command';
 import { Command } from '../commands/command';
+import { SyncCommand } from '../commands/sync.command';
 import { WhoIsCommand } from '../commands/whois.command';
 import { Configuration, DataConfiguration } from '../configuration';
 import { UserEntity } from '../entities/user.entity';
@@ -24,6 +25,11 @@ export class DiscordService {
   ) {
     this.commands['auth'] = new AuthCommand(configuration, this, tokenService);
     this.commands['whois'] = new WhoIsCommand(
+      configuration,
+      this,
+      userRepository,
+    );
+    this.commands['sync'] = new SyncCommand(
       configuration,
       this,
       userRepository,
@@ -148,6 +154,14 @@ export class DiscordService {
     );
   }
 
+  async removeCertifiedRoleTo(
+    guild: Guild,
+    guildMember: GuildMember,
+  ): Promise<void> {
+    const serverConfig = this.getServerConfigForGuild(guild);
+    await guildMember.roles.remove(serverConfig.certifiedRoleId);
+  }
+
   isUserAdministrator(guild: Guild, guildMember: GuildMember): boolean {
     const serverConfig = this.getServerConfigForGuild(guild);
 
@@ -158,9 +172,7 @@ export class DiscordService {
     );
   }
 
-  private getServerConfigForGuild(
-    guild: Guild,
-  ): DataConfiguration['servers'][0] {
+  getServerConfigForGuild(guild: Guild): DataConfiguration['servers'][0] {
     const found = this.dataConfiguration.servers.find(
       (server) => server.id === guild.id,
     );
