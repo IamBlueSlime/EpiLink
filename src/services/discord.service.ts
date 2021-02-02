@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import { AuthCommand } from '../commands/auth.command';
 import { Command } from '../commands/command';
+import { ManCommand } from '../commands/man.command';
 import { SyncCommand } from '../commands/sync.command';
 import { WhoIsCommand } from '../commands/whois.command';
 import { Configuration, DataConfiguration } from '../configuration';
@@ -34,6 +35,7 @@ export class DiscordService {
       this,
       userRepository,
     );
+    this.commands['man'] = new ManCommand();
 
     client.on('guildMemberAdd', (guildMember) => {
       void this.onGuildMemberAdd(guildMember);
