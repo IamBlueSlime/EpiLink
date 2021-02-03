@@ -123,7 +123,7 @@ export class DiscordService {
       this.dataConfiguration.servers.map(async (serverConfig) => {
         const guild = this.client.guilds.cache.get(serverConfig.id);
         return guild.members
-          .fetch(await guild.members.fetch(user))
+          .fetch(user)
           .then((guildMember) =>
             guildMember.roles.add(serverConfig.certifiedRoleId),
           )
