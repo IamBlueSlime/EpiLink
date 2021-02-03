@@ -144,8 +144,9 @@ export class DiscordService {
     await Promise.all(
       this.dataConfiguration.servers.map(async (serverConfig) => {
         const guild = this.client.guilds.cache.get(serverConfig.id);
-        return guild.members
-          .fetch(await guild.members.fetch(discordId))
+        return this.client.users
+          .fetch(discordId)
+          .then((user) => guild.members.fetch(user))
           .then((guildMember) =>
             guildMember.roles.remove(serverConfig.certifiedRoleId),
           )
