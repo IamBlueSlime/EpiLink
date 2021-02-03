@@ -29,7 +29,6 @@ export class AzureAdStrategy extends PassportStrategy(OIDCStrategy, 'azuread') {
   }
 
   validate(_req: Request, profile: IProfile, done: VerifyCallback): void {
-    console.log(profile);
     if (profile.emails && profile.emails.length > 0) {
       return done(null, this.getUser(profile.oid, profile.emails[0]));
     } else if (profile._json.email) {
