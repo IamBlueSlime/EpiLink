@@ -47,7 +47,16 @@ export class VocalTimeCommand extends Command {
   async increaseVocalTimes(): Promise<void> {
     await Promise.all(
       this.client.guilds.cache.map((guild) => {
-        const vocalMembers = this.discordService.listVocalMembers(guild);
+        const vocalMembers = this.discordService
+          .listVocalMembers(guild)
+          .filter(
+            (member) =>
+              !member.voice.mute &&
+              !member.voice.deaf &&
+              !member.voice.selfMute &&
+              !member.voice.selfDeaf,
+          );
+
         return this.userRepository.increment(
           {
             discordId: In(vocalMembers.map((member) => member.id)),
@@ -75,7 +84,7 @@ export class VocalTimeCommand extends Command {
     await this.userRepository.update(
       {},
       {
-        voiceTime: 0,
+        vocalTime: 0,
       },
     );
   }
@@ -89,7 +98,7 @@ export class VocalTimeCommand extends Command {
       .then((userEntities) =>
         userEntities.map((userEntity) => [
           userEntity.microsoftLogin,
-          userEntity.voiceTime,
+          userEntity.vocalTime,
         ]),
       );
 
