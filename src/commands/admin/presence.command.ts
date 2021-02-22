@@ -4,6 +4,7 @@ import { Client, Message, MessageAttachment } from 'discord.js';
 import { In, Repository } from 'typeorm';
 
 import { UserEntity } from '../../data/entities/user.entity';
+import { DiscordService } from '../../services/discord.service';
 import { Command } from '../command';
 
 export class PresenceCommand extends Command {
@@ -12,6 +13,7 @@ export class PresenceCommand extends Command {
   readonly adminOnly = true;
 
   constructor(
+    private readonly discordService: DiscordService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {
@@ -29,21 +31,14 @@ export class PresenceCommand extends Command {
     }
 
     const channelId = args[0];
-    const channels =
-      channelId === 'global'
-        ? message.guild.channels.cache
-            .filter((channel) => channel.type === 'voice')
-            .array()
-        : [message.guild.channels.resolve(channelId)];
-
-    const memberIds = channels.reduce((acc: string[], current) => {
-      acc.push(...current.members.mapValues((member) => member.id).array());
-      return acc;
-    }, []);
+    const members = this.discordService.listVocalMembers(
+      message.guild,
+      channelId === 'global' ? null : channelId,
+    );
 
     const memberLogins = await this.userRepository
       .find({
-        discordId: In(memberIds),
+        discordId: In(members.map((member) => member.id)),
       })
       .then((userEntities) =>
         userEntities.map((userEntity) => userEntity.microsoftLogin),
@@ -61,6 +56,13 @@ export class PresenceCommand extends Command {
         `presence_${timestamp}_${channelId}.csv`,
       ),
     );
+
+    const memberDelta = members.length - memberLogins.length;
+    if (memberDelta > 0) {
+      await message.reply(
+        `${memberDelta} personnes sont absentes du rapport, n'étant pas certifiées.`,
+      );
+    }
 
     return true;
   }

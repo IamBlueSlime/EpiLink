@@ -10,6 +10,10 @@ export class DataServerConfiguration {
   @IsNotEmpty()
   certifiedRoleId: string;
 
+  @IsString()
+  @IsNotEmpty()
+  vocalTimeChannelId: string;
+
   @IsString({ each: true })
   @IsNotEmpty({ each: true })
   adminRoleIds: string[];

@@ -34,4 +34,7 @@ export class UserEntity {
 
   @Column({ name: 'microsoft_login', unique: true })
   microsoftLogin: string;
+
+  @Column({ name: 'voice_time', default: 0 })
+  voiceTime: number;
 }
