@@ -17,7 +17,7 @@ import { Configuration } from './configuration';
 import { AppController } from './controllers/app.controller';
 import { UserEntity } from './data/entities/user.entity';
 import { AddUserEntity1609932504067 } from './data/migrations/1609932504067-add-user-entity';
-import { AddVoiceTimeToUser1614005249396 } from './data/migrations/1614005249396-add-voice-time-to-user';
+import { AddVocalTimeToUser1614005249396 } from './data/migrations/1614005249396-add-vocal-time-to-user';
 import { DiscordService } from './services/discord.service';
 import { TokenService } from './services/token.service';
 
@@ -39,7 +39,7 @@ import { TokenService } from './services/token.service';
         migrationsTransactionMode: 'all',
         migrations: [
           AddUserEntity1609932504067,
-          AddVoiceTimeToUser1614005249396,
+          AddVocalTimeToUser1614005249396,
         ],
       }),
       inject: [Configuration],
