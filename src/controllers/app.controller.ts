@@ -9,7 +9,7 @@ import {
 import { Request } from 'express';
 
 import { AzureAdAuthGuard } from '../auth/azuread.guard';
-import { UserEntity } from '../entities/user.entity';
+import { UserEntity } from '../data/entities/user.entity';
 import { TokenService } from '../services/token.service';
 
 @Controller()

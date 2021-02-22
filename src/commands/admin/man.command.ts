@@ -2,7 +2,7 @@ import { default as axios } from 'axios';
 import * as cheerio from 'cheerio';
 import { Client, Message, MessageEmbed } from 'discord.js';
 
-import { Command } from './command';
+import { Command } from '../command';
 
 // eslint-disable-next-line sonarjs/no-duplicate-string
 const partNames = ['Name', 'Synopsis', 'Description', 'Return Value'];
@@ -56,6 +56,7 @@ async function fetchManPage(section: string, func: string): Promise<ManPage> {
 }
 
 export class ManCommand extends Command {
+  readonly name = 'man';
   readonly channelType = 'text';
   readonly adminOnly = true;
 

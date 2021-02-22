@@ -1,18 +1,19 @@
+import { InjectRepository } from '@nestjs/typeorm';
 import { Client, Message } from 'discord.js';
 import { In, Repository } from 'typeorm';
 
-import { Configuration } from '../configuration';
-import { UserEntity } from '../entities/user.entity';
-import { DiscordService } from '../services/discord.service';
-import { Command } from './command';
+import { UserEntity } from '../../data/entities/user.entity';
+import { DiscordService } from '../../services/discord.service';
+import { Command } from '../command';
 
 export class SyncCommand extends Command {
+  readonly name = 'sync';
   readonly channelType = 'text';
   readonly adminOnly = true;
 
   constructor(
-    private readonly configuration: Configuration,
     private readonly discordService: DiscordService,
+    @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {
     super();

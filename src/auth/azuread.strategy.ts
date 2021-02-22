@@ -5,7 +5,7 @@ import { IProfile, OIDCStrategy, VerifyCallback } from 'passport-azure-ad';
 import { Repository } from 'typeorm';
 
 import { Configuration } from '../configuration';
-import { UserEntity } from '../entities/user.entity';
+import { UserEntity } from '../data/entities/user.entity';
 
 @Injectable()
 export class AzureAdStrategy extends PassportStrategy(OIDCStrategy, 'azuread') {

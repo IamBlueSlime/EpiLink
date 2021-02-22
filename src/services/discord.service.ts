@@ -3,40 +3,21 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Client, Guild, GuildMember, Message, User } from 'discord.js';
 import { Repository } from 'typeorm';
 
-import { AuthCommand } from '../commands/auth.command';
-import { Command } from '../commands/command';
-import { ManCommand } from '../commands/man.command';
-import { SyncCommand } from '../commands/sync.command';
-import { WhoIsCommand } from '../commands/whois.command';
+import { CommandService } from '../commands/command.service';
 import { Configuration, DataConfiguration } from '../configuration';
-import { UserEntity } from '../entities/user.entity';
-import { TokenPayload, TokenService } from './token.service';
+import { UserEntity } from '../data/entities/user.entity';
+import { TokenPayload } from './token.service';
 
 @Injectable()
 export class DiscordService {
-  private readonly commands: Record<string, Command> = {};
-
   constructor(
     private readonly client: Client,
     private readonly configuration: Configuration,
     private readonly dataConfiguration: DataConfiguration,
+    private readonly commandService: CommandService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    private readonly tokenService: TokenService,
   ) {
-    this.commands['auth'] = new AuthCommand(configuration, this, tokenService);
-    this.commands['whois'] = new WhoIsCommand(
-      configuration,
-      this,
-      userRepository,
-    );
-    this.commands['sync'] = new SyncCommand(
-      configuration,
-      this,
-      userRepository,
-    );
-    this.commands['man'] = new ManCommand();
-
     client.on('guildMemberAdd', (guildMember) => {
       void this.onGuildMemberAdd(guildMember);
     });
@@ -83,7 +64,14 @@ export class DiscordService {
     const commandName = args[0].substr(1);
     args.shift();
 
-    const command = this.commands[commandName];
+    const command = this.commandService.commands[commandName];
+
+    try {
+      this.getServerConfigForGuild(message.guild);
+    } catch (err) {
+      await message.react('✍️').then(() => message.react('❌'));
+      return;
+    }
 
     if (
       command &&

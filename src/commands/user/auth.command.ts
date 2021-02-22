@@ -1,11 +1,12 @@
 import { Client, Message } from 'discord.js';
 
-import { Configuration } from '../configuration';
-import { DiscordService } from '../services/discord.service';
-import { TokenService } from '../services/token.service';
-import { Command } from './command';
+import { Configuration } from '../../configuration';
+import { DiscordService } from '../../services/discord.service';
+import { TokenService } from '../../services/token.service';
+import { Command } from '../command';
 
 export class AuthCommand extends Command {
+  readonly name = 'auth';
   readonly channelType = 'dm';
   readonly adminOnly = false;
 
