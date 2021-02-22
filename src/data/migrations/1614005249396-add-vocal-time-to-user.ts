@@ -4,7 +4,7 @@ export class AddVocalTimeToUser1614005249396 implements MigrationInterface {
   async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       ALTER TABLE "user"
-        ADD "vocal_time" integer
+        ADD "vocal_time" integer DEFAULT 0
     `);
   }
 
