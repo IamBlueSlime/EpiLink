@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Client, Intents } from 'discord.js';
 
 import { AuthModule } from './auth/auth.module';
+import { ListMembersCommand } from './commands/admin/listmembers.command';
 import { ManCommand } from './commands/admin/man.command';
 import { PresenceCommand } from './commands/admin/presence.command';
 import { SyncCommand } from './commands/admin/sync.command';
@@ -66,6 +67,7 @@ import { TokenService } from './services/token.service';
     },
     CommandService,
     AuthCommand,
+    ListMembersCommand,
     ManCommand,
     PresenceCommand,
     SyncCommand,
