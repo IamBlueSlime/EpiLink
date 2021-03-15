@@ -166,6 +166,24 @@ export class DiscordService {
     });
   }
 
+  listVocalMembersFlatten(
+    guild: Guild,
+    channelId?: string | null,
+  ): [string, string, GuildMember][] {
+    return this.listVocalMembers(guild, channelId).reduce(
+      (acc: [id: string, name: string, member: GuildMember][], current) => {
+        acc.push(
+          ...current[2].map(
+            (member) =>
+              [current[0], current[1], member] as [string, string, GuildMember],
+          ),
+        );
+        return acc;
+      },
+      [],
+    );
+  }
+
   isUserAdministrator(guild: Guild, guildMember: GuildMember): boolean {
     const serverConfig = this.getServerConfigForGuild(guild);
 

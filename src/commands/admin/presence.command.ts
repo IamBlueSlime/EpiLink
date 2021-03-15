@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { format } from 'date-fns';
-import { Client, GuildMember, Message, MessageAttachment } from 'discord.js';
+import { Client, Message, MessageAttachment } from 'discord.js';
 import { In, Repository } from 'typeorm';
 
 import { UserEntity } from '../../data/entities/user.entity';
@@ -31,21 +31,9 @@ export class PresenceCommand extends Command {
     }
 
     const channelId = args[0];
-    const vocalList = this.discordService.listVocalMembers(
+    const vocalList = this.discordService.listVocalMembersFlatten(
       message.guild,
       channelId === 'global' ? null : channelId,
-    );
-    const flatVocalList = vocalList.reduce(
-      (acc: [id: string, name: string, member: GuildMember][], current) => {
-        acc.push(
-          ...current[2].map(
-            (member) =>
-              [current[0], current[1], member] as [string, string, GuildMember],
-          ),
-        );
-        return acc;
-      },
-      [],
     );
 
     const memberLoginsMap: [
@@ -53,7 +41,7 @@ export class PresenceCommand extends Command {
       login: string,
     ][] = await this.userRepository
       .find({
-        discordId: In(flatVocalList.map((entry) => entry[2].id)),
+        discordId: In(vocalList.map((entry) => entry[2].id)),
       })
       .then((userEntities) =>
         userEntities.map(
@@ -65,7 +53,7 @@ export class PresenceCommand extends Command {
     const csvData = [
       ['channel_id', 'channel_name', 'login'],
       ...memberLoginsMap.map((memberLogin) => {
-        const foundVocalListEntry = flatVocalList.find(
+        const foundVocalListEntry = vocalList.find(
           (entry) => entry[2].id === memberLogin[0],
         );
         return [foundVocalListEntry[0], foundVocalListEntry[1], memberLogin[1]];

@@ -48,7 +48,8 @@ export class VocalTimeCommand extends Command {
     await Promise.all(
       this.client.guilds.cache.map((guild) => {
         const vocalMembers = this.discordService
-          .listVocalMembers(guild)
+          .listVocalMembersFlatten(guild)
+          .map((entry) => entry[2])
           .filter(
             (member) =>
               !member.voice.mute &&
