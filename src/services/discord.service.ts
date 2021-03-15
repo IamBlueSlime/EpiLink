@@ -151,17 +151,19 @@ export class DiscordService {
     await guildMember.roles.remove(serverConfig.certifiedRoleId);
   }
 
-  listVocalMembers(guild: Guild, channelId?: string | null): GuildMember[] {
+  listVocalMembers(
+    guild: Guild,
+    channelId?: string | null,
+  ): [string, string, GuildMember[]][] {
     const channels = channelId
       ? [guild.channels.resolve(channelId)]
       : guild.channels.cache
           .filter((channel) => channel.type === 'voice')
           .array();
 
-    return channels.reduce((acc: GuildMember[], current) => {
-      acc.push(...current.members.array());
-      return acc;
-    }, []);
+    return channels.map((channel) => {
+      return [channel.id, channel.name, channel.members.array()];
+    });
   }
 
   isUserAdministrator(guild: Guild, guildMember: GuildMember): boolean {

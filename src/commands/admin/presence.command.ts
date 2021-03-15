@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { format } from 'date-fns';
-import { Client, Message, MessageAttachment } from 'discord.js';
+import { Client, GuildMember, Message, MessageAttachment } from 'discord.js';
 import { In, Repository } from 'typeorm';
 
 import { UserEntity } from '../../data/entities/user.entity';
@@ -31,20 +31,46 @@ export class PresenceCommand extends Command {
     }
 
     const channelId = args[0];
-    const members = this.discordService.listVocalMembers(
+    const vocalList = this.discordService.listVocalMembers(
       message.guild,
       channelId === 'global' ? null : channelId,
     );
+    const flatVocalList = vocalList.reduce(
+      (acc: [id: string, name: string, member: GuildMember][], current) => {
+        acc.push(
+          ...current[2].map(
+            (member) =>
+              [current[0], current[1], member] as [string, string, GuildMember],
+          ),
+        );
+        return acc;
+      },
+      [],
+    );
 
-    const memberLogins = await this.userRepository
+    const memberLoginsMap: [
+      id: string,
+      login: string,
+    ][] = await this.userRepository
       .find({
-        discordId: In(members.map((member) => member.id)),
+        discordId: In(flatVocalList.map((entry) => entry[2].id)),
       })
       .then((userEntities) =>
-        userEntities.map((userEntity) => userEntity.microsoftLogin),
+        userEntities.map(
+          (userEntity) => [userEntity.discordId, userEntity.microsoftLogin],
+          [],
+        ),
       );
 
-    const csvData = [['login'], ...memberLogins.map((login) => [login])]
+    const csvData = [
+      ['channel_id', 'channel_name', 'login'],
+      ...memberLoginsMap.map((memberLogin) => {
+        const foundVocalListEntry = flatVocalList.find(
+          (entry) => entry[2].id === memberLogin[0],
+        );
+        return [foundVocalListEntry[0], foundVocalListEntry[1], memberLogin[1]];
+      }),
+    ]
       .map((line) => line.join(','))
       .join('\n');
 
@@ -57,7 +83,7 @@ export class PresenceCommand extends Command {
       ),
     );
 
-    const memberDelta = members.length - memberLogins.length;
+    const memberDelta = flatVocalList.length - memberLoginsMap.length;
     if (memberDelta > 0) {
       await message.reply(
         `${memberDelta} personnes sont absentes du rapport, n'étant pas certifiées.`,
