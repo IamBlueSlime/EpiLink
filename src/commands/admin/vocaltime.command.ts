@@ -1,3 +1,4 @@
+import { Logger, Optional } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { format, subDays } from 'date-fns';
@@ -18,6 +19,7 @@ export class VocalTimeCommand extends Command {
     private readonly discordService: DiscordService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @Optional() private readonly logger = new Logger(new.target.name),
   ) {
     super();
   }
@@ -43,8 +45,10 @@ export class VocalTimeCommand extends Command {
     return true;
   }
 
-  @Cron('0 0,30 * * * *')
+  @Cron('0 */30 * * * *')
   async increaseVocalTimes(): Promise<void> {
+    this.logger.log('Increasing vocal times to eligible members...');
+
     await Promise.all(
       this.client.guilds.cache.map((guild) => {
         const vocalMembers = this.discordService
@@ -58,6 +62,9 @@ export class VocalTimeCommand extends Command {
               !member.voice.selfDeaf,
           );
 
+        this.logger.log(
+          `Increasing 30 minutes to ${vocalMembers.length} members of guild ${guild.id}`,
+        );
         return this.userRepository.increment(
           {
             discordId: In(vocalMembers.map((member) => member.id)),
@@ -71,6 +78,8 @@ export class VocalTimeCommand extends Command {
 
   @Cron('0 0 9 * * *')
   async resetVocalTimes(): Promise<void> {
+    this.logger.log('Resetting vocal times...');
+
     await Promise.all(
       this.client.guilds.cache.map((guild) => {
         const channelId = this.discordService.getServerConfigForGuild(guild)
