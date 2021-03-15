@@ -71,7 +71,7 @@ export class PresenceCommand extends Command {
       ),
     );
 
-    const memberDelta = flatVocalList.length - memberLoginsMap.length;
+    const memberDelta = vocalList.length - memberLoginsMap.length;
     if (memberDelta > 0) {
       await message.reply(
         `${memberDelta} personnes sont absentes du rapport, n'étant pas certifiées.`,
