@@ -40,13 +40,13 @@ services:
       retries: 3
 
   database:
-    image: bitnami/postgresql:13
+    image: postgres:13
     environment:
       POSTGRES_USER: ${DATABASE_USERNAME}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: ${DATABASE_NAME}
     volumes:
-      - ./_db:/bitnami/postgresql
+      - ./_db:/var/lib/postgresql/data
     networks:
       - epilink-private
     restart: on-failure
