@@ -2,9 +2,7 @@ version: '3'
 
 services:
   epilink:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/iamblueslime/epilink:1.0.0
     environment:
       - HOST
       - PORT
