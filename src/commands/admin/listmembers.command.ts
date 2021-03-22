@@ -49,7 +49,7 @@ export class ListMembersCommand extends Command {
           member.roles.cache
             .mapValues((role) => role.name)
             .array()
-            .join(', '),
+            .join(';'),
         ];
       }),
     ]
