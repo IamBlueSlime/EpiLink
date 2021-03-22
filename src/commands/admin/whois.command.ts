@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Client, Message } from 'discord.js';
 import { Repository } from 'typeorm';
@@ -5,6 +6,7 @@ import { Repository } from 'typeorm';
 import { UserEntity } from '../../data/entities/user.entity';
 import { Command } from '../command';
 
+@Injectable()
 export class WhoIsCommand extends Command {
   readonly name = 'whois';
   readonly channelType = 'text';

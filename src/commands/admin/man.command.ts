@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { default as axios } from 'axios';
 import * as cheerio from 'cheerio';
 import { Client, Message, MessageEmbed } from 'discord.js';
@@ -55,6 +56,7 @@ async function fetchManPage(section: string, func: string): Promise<ManPage> {
   };
 }
 
+@Injectable()
 export class ManCommand extends Command {
   readonly name = 'man';
   readonly channelType = 'text';

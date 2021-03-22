@@ -1,7 +1,5 @@
-import { Injectable } from '@nestjs/common';
 import { Client, Message } from 'discord.js';
 
-@Injectable()
 export abstract class Command {
   abstract readonly name: string;
   abstract readonly channelType: 'text' | 'dm' | 'news';

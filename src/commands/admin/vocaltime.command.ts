@@ -1,4 +1,4 @@
-import { Logger, Optional } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { format, subDays } from 'date-fns';
@@ -9,6 +9,7 @@ import { UserEntity } from '../../data/entities/user.entity';
 import { DiscordService } from '../../services/discord.service';
 import { Command } from '../command';
 
+@Injectable()
 export class VocalTimeCommand extends Command {
   readonly name = 'vocaltime';
   readonly channelType = 'text';

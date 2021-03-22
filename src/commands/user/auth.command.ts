@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { Client, Message } from 'discord.js';
 
 import { Configuration } from '../../configuration';
@@ -5,6 +6,7 @@ import { DiscordService } from '../../services/discord.service';
 import { TokenService } from '../../services/token.service';
 import { Command } from '../command';
 
+@Injectable()
 export class AuthCommand extends Command {
   readonly name = 'auth';
   readonly channelType = 'dm';
@@ -16,7 +18,6 @@ export class AuthCommand extends Command {
     private readonly tokenService: TokenService,
   ) {
     super();
-    console.log(configuration, discordService, tokenService);
   }
 
   async handle(

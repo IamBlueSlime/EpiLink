@@ -5,3 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+
+  database:
+    ports:
+      - 5432:5432

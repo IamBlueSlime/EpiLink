@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { format } from 'date-fns';
 import { Client, Message, MessageAttachment } from 'discord.js';
@@ -7,6 +8,7 @@ import { UserEntity } from '../../data/entities/user.entity';
 import { DiscordService } from '../../services/discord.service';
 import { Command } from '../command';
 
+@Injectable()
 export class PresenceCommand extends Command {
   readonly name = 'presence';
   readonly channelType = 'text';

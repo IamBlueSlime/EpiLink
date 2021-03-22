@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Client, Message } from 'discord.js';
 import { In, Repository } from 'typeorm';
@@ -6,6 +7,7 @@ import { UserEntity } from '../../data/entities/user.entity';
 import { DiscordService } from '../../services/discord.service';
 import { Command } from '../command';
 
+@Injectable()
 export class SyncCommand extends Command {
   readonly name = 'sync';
   readonly channelType = 'text';
