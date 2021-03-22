@@ -27,6 +27,7 @@ import { Configuration, DataConfiguration } from './configuration';
             process.exit(1);
           }
 
+          console.log(config);
           return config;
         });
       },
