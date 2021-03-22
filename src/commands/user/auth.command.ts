@@ -16,6 +16,7 @@ export class AuthCommand extends Command {
     private readonly tokenService: TokenService,
   ) {
     super();
+    console.log(configuration, discordService, tokenService);
   }
 
   async handle(
