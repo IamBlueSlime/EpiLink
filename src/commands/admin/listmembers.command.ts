@@ -37,7 +37,7 @@ export class ListMembersCommand extends Command {
     });
 
     const csvData = [
-      ['discord_id', 'discord_name', 'microsoft_login'],
+      ['discord_id', 'discord_name', 'microsoft_login', 'roles'],
       ...guildMembers.map((member) => {
         const databaseEntity = databaseEntities.find(
           (entity) => entity.discordId === member.id,
@@ -46,6 +46,10 @@ export class ListMembersCommand extends Command {
           member.id,
           member.nickname,
           databaseEntity ? databaseEntity.microsoftLogin : 'N/A',
+          member.roles.cache
+            .mapValues((role) => role.name)
+            .array()
+            .join(', '),
         ];
       }),
     ]
