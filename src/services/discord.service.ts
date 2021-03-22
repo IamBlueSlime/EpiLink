@@ -65,19 +65,24 @@ export class DiscordService {
     args.shift();
 
     const command = this.commandService.commands[commandName];
-
-    try {
-      this.getServerConfigForGuild(message.guild);
-    } catch (err) {
-      await message.react('✍️').then(() => message.react('❌'));
+    if (!command || command.channelType !== message.channel.type) {
+      await message.react('🤔');
       return;
     }
 
+    if (command.channelType !== 'dm') {
+      try {
+        this.getServerConfigForGuild(message.guild);
+      } catch (err) {
+        await message.react('✍️').then(() => message.react('❌'));
+        return;
+      }
+    }
+
     if (
-      command &&
-      command.channelType === message.channel.type &&
-      (!command.adminOnly ||
-        this.isUserAdministrator(message.guild, message.member))
+      command.channelType === 'dm' ||
+      !command.adminOnly ||
+      this.isUserAdministrator(message.guild, message.member)
     ) {
       if (await command.handle(this.client, message, args))
         await message.react('👌');
