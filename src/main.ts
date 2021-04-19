@@ -1,6 +1,5 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import * as cookieParser from 'cookie-parser';
 import * as session from 'express-session';
 import * as passport from 'passport';
 
@@ -23,7 +22,6 @@ async function bootstrap(): Promise<void> {
       },
     }),
   );
-  app.use(cookieParser());
   app.use(passport.initialize());
   app.use(passport.session());
   app.useGlobalPipes(

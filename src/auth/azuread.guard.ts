@@ -6,7 +6,7 @@ export class AzureAdAuthGuard extends AuthGuard('azuread') {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     console.log('guard');
     const request = context.switchToHttp().getRequest();
-    console.log(request.session);
+    console.log(JSON.stringify(request.session));
     const can = await super.canActivate(context);
     console.log('guard can', can);
 
