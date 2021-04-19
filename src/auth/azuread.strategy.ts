@@ -29,6 +29,7 @@ export class AzureAdStrategy extends PassportStrategy(OIDCStrategy, 'azuread') {
   }
 
   validate(_req: Request, profile: IProfile, done: VerifyCallback): void {
+    console.log('validate', profile);
     if (profile.emails && profile.emails.length > 0) {
       return done(null, this.getUser(profile.oid, profile.emails[0]));
     } else if (profile._json.email) {
@@ -39,6 +40,7 @@ export class AzureAdStrategy extends PassportStrategy(OIDCStrategy, 'azuread') {
   }
 
   private getUser(id: string, login: string): Promise<UserEntity> {
+    console.log('get', id, login);
     return this.userRepository
       .findOne({
         microsoftId: id,
