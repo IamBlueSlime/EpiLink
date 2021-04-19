@@ -24,11 +24,18 @@ export class AzureAdStrategy extends PassportStrategy(OIDCStrategy, 'azuread') {
       clientSecret: configuration.azureAdClientSecret,
       useCookieInsteadOfSession: false,
       scope: ['email', 'profile'],
-      passReqToCallback: true,
+      passReqToCallback: false,
     });
   }
 
-  validate(_req: Request, profile: IProfile, done: VerifyCallback): void {
+  validate(
+    _iss: string,
+    _sub: string,
+    profile: IProfile,
+    _accessToken: string,
+    _refreshToken: string,
+    done: VerifyCallback,
+  ): void {
     console.log('validate', profile);
     if (profile.emails && profile.emails.length > 0) {
       return done(null, this.getUser(profile.oid, profile.emails[0]));
