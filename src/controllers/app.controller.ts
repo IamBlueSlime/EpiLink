@@ -4,28 +4,30 @@ import {
   HttpCode,
   HttpStatus,
   Req,
-  UseGuards,
+  Res,
 } from '@nestjs/common';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
-import { AzureAdAuthGuard } from '../auth/azuread.guard';
-import { UserEntity } from '../data/entities/user.entity';
+import { AuthService } from '../services/auth.service';
 import { TokenService } from '../services/token.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly tokenService: TokenService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly tokenService: TokenService,
+  ) {}
 
   @Get('link')
   @HttpCode(HttpStatus.MOVED_PERMANENTLY)
-  @UseGuards(AzureAdAuthGuard)
-  link() {}
+  async link(@Res() res: Response) {
+    res.redirect(await this.authService.getLoginUri());
+  }
 
   @Get('link/callback')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AzureAdAuthGuard)
   async linkCallback(@Req() request: Request): Promise<string> {
-    const user = request.user as UserEntity;
+    const user = await this.authService.getUser(request.query.code as string);
 
     const token = await this.tokenService.encodeToken({
       microsoftId: user.microsoftId,

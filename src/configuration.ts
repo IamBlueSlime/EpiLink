@@ -44,10 +44,6 @@ export class Configuration {
 
   @IsString()
   @IsNotEmpty()
-  sessionSecret: string;
-
-  @IsString()
-  @IsNotEmpty()
   databaseHost: string;
 
   @Min(0)

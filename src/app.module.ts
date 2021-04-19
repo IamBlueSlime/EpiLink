@@ -1,12 +1,10 @@
+import { ConfidentialClientApplication } from '@azure/msal-node';
 import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
-import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Client, Intents } from 'discord.js';
 
-import { AzureAdStrategy } from './auth/azuread.strategy';
-import { SessionSerializer } from './auth/session.serializer';
 import { ListMembersCommand } from './commands/admin/listmembers.command';
 import { ManCommand } from './commands/admin/man.command';
 import { PresenceCommand } from './commands/admin/presence.command';
@@ -21,13 +19,13 @@ import { AppController } from './controllers/app.controller';
 import { UserEntity } from './data/entities/user.entity';
 import { AddUserEntity1609932504067 } from './data/migrations/1609932504067-add-user-entity';
 import { AddVocalTimeToUser1614005249396 } from './data/migrations/1614005249396-add-vocal-time-to-user';
+import { AuthService } from './services/auth.service';
 import { DiscordService } from './services/discord.service';
 import { TokenService } from './services/token.service';
 
 @Module({
   imports: [
     ConfigModule,
-    PassportModule.register({ session: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configuration: Configuration) => ({
@@ -54,10 +52,21 @@ import { TokenService } from './services/token.service';
   ],
   controllers: [AppController],
   providers: [
-    AzureAdStrategy,
-    SessionSerializer,
+    AuthService,
     DiscordService,
     TokenService,
+    {
+      provide: ConfidentialClientApplication,
+      useFactory: (configuration: Configuration) =>
+        new ConfidentialClientApplication({
+          auth: {
+            authority: `https://login.microsoftonline.com/${configuration.azureAdTenant}`,
+            clientId: configuration.azureAdClientId,
+            clientSecret: configuration.azureAdClientSecret,
+          },
+        }),
+      inject: [Configuration],
+    },
     {
       provide: Client,
       useFactory: async (configuration: Configuration) => {
