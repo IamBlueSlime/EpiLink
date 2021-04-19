@@ -32,8 +32,6 @@ export class AzureAdStrategy extends PassportStrategy(OIDCStrategy, 'azuread') {
     _iss: string,
     _sub: string,
     profile: IProfile,
-    _accessToken: string,
-    _refreshToken: string,
     done: VerifyCallback,
   ): void {
     console.log('validate', profile);
