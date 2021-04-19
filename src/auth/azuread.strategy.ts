@@ -25,6 +25,7 @@ export class AzureAdStrategy extends PassportStrategy(OIDCStrategy, 'azuread') {
       useCookieInsteadOfSession: false,
       scope: ['email', 'profile'],
       passReqToCallback: false,
+      loggingLevel: 'info',
     });
   }
 
