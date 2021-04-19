@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
+import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Client, Intents } from 'discord.js';
 
-import { AuthModule } from './auth/auth.module';
+import { AzureAdStrategy } from './auth/azuread.strategy';
+import { SessionSerializer } from './auth/session.serializer';
 import { ListMembersCommand } from './commands/admin/listmembers.command';
 import { ManCommand } from './commands/admin/man.command';
 import { PresenceCommand } from './commands/admin/presence.command';
@@ -25,6 +27,7 @@ import { TokenService } from './services/token.service';
 @Module({
   imports: [
     ConfigModule,
+    PassportModule.register({ session: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configuration: Configuration) => ({
@@ -46,12 +49,13 @@ import { TokenService } from './services/token.service';
       inject: [Configuration],
     }),
     TypeOrmModule.forFeature([UserEntity]),
-    AuthModule,
     DiscoveryModule,
     ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [
+    AzureAdStrategy,
+    SessionSerializer,
     DiscordService,
     TokenService,
     {
