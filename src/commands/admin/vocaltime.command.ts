@@ -70,7 +70,7 @@ export class VocalTimeCommand extends Command {
           {
             discordId: In(vocalMembers.map((member) => member.id)),
           },
-          'vocal_time',
+          'vocalTime',
           30,
         );
       }),
