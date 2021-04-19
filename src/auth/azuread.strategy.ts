@@ -1,7 +1,7 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IProfile, OIDCStrategy, VerifyCallback } from 'passport-azure-ad';
+import { IProfile, OIDCStrategy } from 'passport-azure-ad';
 import { Repository } from 'typeorm';
 
 import { Configuration } from '../configuration';
@@ -28,20 +28,15 @@ export class AzureAdStrategy extends PassportStrategy(OIDCStrategy, 'azuread') {
     });
   }
 
-  validate(
-    _iss: string,
-    _sub: string,
-    profile: IProfile,
-    done: VerifyCallback,
-  ): void {
+  validate(_iss: string, _sub: string, profile: IProfile): Promise<UserEntity> {
     console.log('validate', profile);
     if (profile.emails && profile.emails.length > 0) {
-      return done(null, this.getUser(profile.oid, profile.emails[0]));
+      return this.getUser(profile.oid, profile.emails[0]);
     } else if (profile._json.email) {
-      return done(null, this.getUser(profile.oid, profile._json.email));
+      return this.getUser(profile.oid, profile._json.email);
     }
 
-    done(new UnprocessableEntityException('No email found in Azure profile'));
+    throw new UnprocessableEntityException('No email found in Azure profile');
   }
 
   private getUser(id: string, login: string): Promise<UserEntity> {
