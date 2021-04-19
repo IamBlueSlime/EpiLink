@@ -33,17 +33,17 @@ export class AppController {
     });
 
     return `
-    <html>
-      <head>
-          <title>EpiLink</title>
-          <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-      </head>
+      <html>
+        <head>
+            <title>EpiLink</title>
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        </head>
 
-      <body>
-          <p>Envoyez la commande suivante au bot pour lier votre compte :</p>
-          <code>!auth ${token}</code>
-      </body>
-    </html>
+        <body>
+            <p>Envoyez la commande suivante au bot pour lier votre compte :</p>
+            <code>!auth ${token}</code>
+        </body>
+      </html>
     `;
   }
 }

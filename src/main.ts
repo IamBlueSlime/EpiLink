@@ -13,13 +13,13 @@ async function bootstrap(): Promise<void> {
   app.use(
     session({
       secret: config.sessionSecret,
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 7,
-        sameSite: config.publicHost.startsWith('https://'),
-        secure: config.publicHost.startsWith('https://'),
-      },
+      // resave: false,
+      // saveUninitialized: false,
+      // cookie: {
+      //   maxAge: 1000 * 60 * 60 * 24 * 7,
+      //   sameSite: config.publicHost.startsWith('https://'),
+      //   secure: config.publicHost.startsWith('https://'),
+      // },
     }),
   );
   app.use(passport.initialize());
